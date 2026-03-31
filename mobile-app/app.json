@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "TrustSenseMobile",
+    "slug": "trust-sense-mobile",
+    "version": "1.0.0",
+    "sdkVersion": "48.0.0",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTabletMode": true
+    },
+    "android": {
+      "minSdkVersion": 24,
+      "targetSdkVersion": 34
+    }
+  }
+}
+

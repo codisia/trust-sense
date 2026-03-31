@@ -1,0 +1,16 @@
+# Optional AI/ML dependencies for advanced NLP and multimodal analysis.
+# Install with: pip install -r requirements-ai.txt
+# Uses HUGGINGFACE_API_KEY or local models.
+
+# Hugging Face Transformers — NLP: fake news, sentiment, emotion, NER
+transformers>=4.36.0
+torch>=2.0.0
+accelerate>=0.25.0
+sentencepiece>=0.1.99
+
+# Uncomment for Whisper (audio → text). Heavy dependency.
+# openai-whisper>=20231117
+
+# Uncomment for OpenCV/Mediapipe (image/video). Use in a separate image if needed.
+# opencv-python-headless>=4.8.0
+# mediapipe>=0.10.0

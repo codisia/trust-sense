@@ -1,0 +1,201 @@
+---
+# Tekton CI/CD Pipeline for Trust Sense
+# Automated build, test, security scan, and deployment
+
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: url
+      description: Repository URL
+    - name: revision
+      default: main
+  results:
+    - name: commit
+      description: Head commit hash
+  workspaces:
+    - name: source
+  steps:
+    - name: clone
+      image: alpine/git:latest
+      securityContext:
+        readOnlyRootFilesystem: true
+      script: |
+        cd $(workspaces.source.path)
+        git clone $(params.url) .
+        git checkout $(params.revision)
+        git rev-parse HEAD > /tmp/commit
+    - name: read-commit
+      image: alpine:latest
+      command:
+        - cat
+        - /tmp/commit
+      securityContext:
+        readOnlyRootFilesystem: true
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: security-scan
+  namespace: tekton-pipelines
+spec:
+  description: Security scanning with Trivy
+  workspaces:
+    - name: source
+  steps:
+    - name: scan
+      image: aquasec/trivy:latest
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+      env:
+        - name: TRIVY_QUIET
+          value: "false"
+      script: |
+        trivy fs --severity HIGH,CRITICAL $(workspaces.source.path)
+        echo "✓ Security scan complete"
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-push
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: image-url
+      description: Image URL for pushing
+    - name: registry-username
+    - name: registry-password
+      type: string
+  workspaces:
+    - name: source
+  steps:
+    - name: build
+      image: gcr.io/kaniko-project/executor:latest
+      securityContext:
+        allowPrivilegeEscalation: false
+      env:
+        - name: DOCKER_CONFIG
+          value: /tekton/home/.docker
+      args:
+        - --dockerfile=Dockerfile
+        - --context=$(workspaces.source.path)
+        - --destination=$(params.image-url)
+        - --cache=true
+        - --use-new-run
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: deploy-k8s
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: image-url
+      description: Image URL to deploy
+    - name: namespace
+      default: trust-sense
+  steps:
+    - name: deploy
+      image: bitnami/kubectl:latest
+      securityContext:
+        allowPrivilegeEscalation: false
+      command:
+        - kubectl
+        - set
+        - image
+        - deployment/trust-sense-backend
+        - backend=$(params.image-url)
+        - -n
+        - $(params.namespace)
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: trust-sense-pipeline
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: git-url
+      type: string
+      description: Git repository URL
+    - name: image-url
+      type: string
+      description: Image URL for registry
+  workspaces:
+    - name: source
+  tasks:
+    # 1. Clone repository
+    - name: git-clone
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.git-url)
+      workspaces:
+        - name: source
+          workspace: source
+
+    # 2. Security scan
+    - name: security-scan
+      runAfter:
+        - git-clone
+      taskRef:
+        name: security-scan
+      workspaces:
+        - name: source
+          workspace: source
+
+    # 3. Build and push
+    - name: build-and-push
+      runAfter:
+        - security-scan
+      taskRef:
+        name: build-and-push
+      params:
+        - name: image-url
+          value: $(params.image-url)
+      workspaces:
+        - name: source
+          workspace: source
+
+    # 4. Deploy to K8s
+    - name: deploy
+      runAfter:
+        - build-and-push
+      taskRef:
+        name: deploy-k8s
+      params:
+        - name: image-url
+          value: $(params.image-url)
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: trust-sense-run-manual
+  namespace: tekton-pipelines
+spec:
+  pipelineRef:
+    name: trust-sense-pipeline
+  params:
+    - name: git-url
+      value: https://github.com/yourusername/trust-sense
+    - name: image-url
+      value: gcr.io/your-project/trust-sense-backend:latest
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

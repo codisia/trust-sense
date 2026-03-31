@@ -1,0 +1,73 @@
+fastapi>=0.115.5
+uvicorn[standard]>=0.32.0
+sqlalchemy>=2.0.36
+psycopg2-binary>=2.9.9
+pydantic>=2.10.3
+pydantic-settings>=2.7.0
+email-validator>=2.2.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+anthropic>=0.40.0
+groq>=0.4.0
+python-multipart>=0.0.20
+requests>=2.31.0
+python-dotenv>=1.0.0
+numpy>=1.24.0
+pillow>=10.0.0
+scipy>=1.11.0
+# AI & ML Dependencies
+scikit-learn>=1.3.0
+nltk>=3.8.1
+textblob>=0.17.1
+transformers>=4.30.0
+torch>=2.0.0
+
+# Audio/Video Processing
+librosa>=0.10.0
+soundfile>=0.12.1
+moviepy>=1.0.3
+opencv-python>=4.8.0
+openai-whisper>=20231117
+face-recognition>=1.3.0
+pytesseract>=0.3.10
+
+# Data Processing
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# Caching & Sessions
+redis>=5.0.0
+hiredis>=2.2.0
+
+# PDF & Report Generation
+reportlab>=4.0.0
+weasyprint>=59.0
+
+# Monitoring & Logging
+python-json-logger>=2.0.0
+structlog>=23.1.0
+slowapi>=0.1.7
+
+# AI News Pipeline
+feedparser>=6.0.0
+apscheduler>=3.10.0
+google-api-python-client>=2.99.0
+google-auth-oauthlib>=1.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+httpx>=0.24.0
+
+# Database Migrations
+alembic>=1.11.0
+
+# API Documentation
+python-multipart>=0.0.20
+
+# External APIs
+supabase>=2.0.0
+google-auth>=2.25.0
+google-api-python-client>=2.100.0
+stripe>=5.0.0  # optional, used for international payments

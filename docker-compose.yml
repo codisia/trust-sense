@@ -1,0 +1,189 @@
+services:
+  # ========== FRONTEND ==========
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000
+        VITE_SUPABASE_URL: https://detawdfanzmrkqbcfmus.supabase.co
+        VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRldGF3ZGZhbnptcmtxYmNmbXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzM1MzQsImV4cCI6MjA4ODE0OTUzNH0.Iv49TIZ0uAQbbrvb-P25vPBVnHXgVueHHxS4CzsXTik
+    container_name: trust-sense-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:8000
+    networks:
+      - trust-sense-network
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+    labels:
+      - "app=trust-sense"
+      - "component=frontend"
+
+  # ========== BACKEND ==========
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: trust-sense-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.docker
+    environment:
+      DATABASE_URL: postgresql://trustsense:trustsense123@postgres:5432/trustsense
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://frontend:5173}
+      DEBUG: ${DEBUG:-False}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      SUPABASE_URL: ${SUPABASE_URL:-https://detawdfanzmrkqbcfmus.supabase.co}
+      SUPABASE_KEY: ${SUPABASE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRldGF3ZGZhbnptcmtxYmNmbXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzM1MzQsImV4cCI6MjA4ODE0OTUzNH0.Iv49TIZ0uAQbbrvb-P25vPBVnHXgVueHHxS4CzsXTik}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET:-7b50a4a6-31a3-46be-931d-e80f47d7c08b}
+      POWERBI_TENANT_ID: ${POWERBI_TENANT_ID:-1ecd776d-d57f-4de0-a67a-eca9809e8d8d}
+      POWERBI_CLIENT_ID: ${POWERBI_CLIENT_ID:-4e896243-a515-41ac-8512-ff2ca3ed1918}
+      POWERBI_CLIENT_SECRET: ${POWERBI_CLIENT_SECRET:-72358ec0-76b6-473e-bf67-2e417f466a48}
+      POWERBI_API_URL: ${POWERBI_API_URL:-https://api.powerbi.com/v1.0/myorg}
+      GROQ_API_KEY: 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
+      HUGGINGFACE_API_KEY: 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
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # AI News Pipeline
+      NEWSAPI_KEY: ${NEWSAPI_KEY:-}
+      HEYGEN_API_KEY: ${HEYGEN_API_KEY:-}
+      YOUTUBE_CLIENT_SECRETS: ${YOUTUBE_CLIENT_SECRETS:-}
+      YOUTUBE_CREDENTIALS: ${YOUTUBE_CREDENTIALS:-}
+      AI_NEWS_VIDEO_DIR: /app/videos
+    volumes:
+      - ./backend:/app
+      - ./codexia_platform:/app/codexia_platform
+      - backend_data:/app/data
+      - ./videos:/app/videos
+    networks:
+      - trust-sense-network
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    labels:
+      - "app=trust-sense"
+      - "component=backend"
+
+  # ========== NEWS WORKER (Background Processing) ==========
+  news-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: trust-sense-news-worker
+    command: [
+      "sh", "-c",
+      "export PYTHONPATH=/app:/app/codexia_platform && python -u -c 'import time; from codexia_platform.ai_news.scheduler import start_scheduler; from app.core.database import engine; from app.models.models import Base; Base.metadata.create_all(bind=engine); start_scheduler(interval_minutes=60); print(\"News scheduler started\"); import sys; sys.stdout.flush(); [(time.sleep(60) or None) for _ in iter(int, 1)]'"
+    ]
+    env_file:
+      - .env.docker
+    environment:
+      DATABASE_URL: postgresql://trustsense:trustsense123@postgres:5432/trustsense
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://frontend:5173}
+      DEBUG: ${DEBUG:-False}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      SUPABASE_URL: ${SUPABASE_URL:-https://detawdfanzmrkqbcfmus.supabase.co}
+      SUPABASE_KEY: ${SUPABASE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRldGF3ZGZhbnptcmtxYmNmbXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzM1MzQsImV4cCI6MjA4ODE0OTUzNH0.Iv49TIZ0uAQbbrvb-P25vPBVnHXgVueHHxS4CzsXTik}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET:-7b50a4a6-31a3-46be-931d-e80f47d7c08b}
+      POWERBI_TENANT_ID: ${POWERBI_TENANT_ID:-1ecd776d-d57f-4de0-a67a-eca9809e8d8d}
+      POWERBI_CLIENT_ID: ${POWERBI_CLIENT_ID:-4e896243-a515-41ac-8512-ff2ca3ed1918}
+      POWERBI_CLIENT_SECRET: ${POWERBI_CLIENT_SECRET:-72358ec0-76b6-473e-bf67-2e417f466a48}
+      POWERBI_API_URL: ${POWERBI_API_URL:-https://api.powerbi.com/v1.0/myorg}
+      GROQ_API_KEY: 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
+      HUGGINGFACE_API_KEY: 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
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # AI News Pipeline
+      NEWSAPI_KEY: ${NEWSAPI_KEY:-}
+      HEYGEN_API_KEY: ${HEYGEN_API_KEY:-}
+      YOUTUBE_CLIENT_SECRETS: ${YOUTUBE_CLIENT_SECRETS:-}
+      YOUTUBE_CREDENTIALS: ${YOUTUBE_CREDENTIALS:-}
+      AI_NEWS_VIDEO_DIR: /app/videos
+    volumes:
+      - ./backend:/app
+      - ./codexia_platform:/app/codexia_platform
+      - backend_data:/app/data
+      - ./videos:/app/videos
+    networks:
+      - trust-sense-network
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    labels:
+      - "app=trust-sense"
+      - "component=news-worker"
+
+  # ========== REDIS (Caching & Sessions) ==========
+  redis:
+    image: redis:7-alpine
+    container_name: trust-sense-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - trust-sense-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    labels:
+      - "app=trust-sense"
+      - "component=cache"
+
+  # ========== POSTGRESQL (For Power BI & Production) ==========
+  postgres:
+    image: postgres:15-alpine
+    container_name: trust-sense-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-trustsense}
+      POSTGRES_USER: ${POSTGRES_USER:-trustsense}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-trustsense123}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - trust-sense-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trustsense"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    labels:
+      - "app=trust-sense"
+      - "component=database"
+
+networks:
+  trust-sense-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/16
+
+volumes:
+  backend_data:
+  redis_data:
+  postgres_data:
+  videos:

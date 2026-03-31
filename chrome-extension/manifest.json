@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Codexia AI - Media Intelligence",
+  "version": "1.0.0",
+  "description": "Codexia AI: Real-time analysis of web page content for credibility and trustworthiness",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "codexia.png",
+    "32": "codexia.png",
+    "48": "codexia.png",
+    "128": "codexia.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Codexia AI Analysis"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

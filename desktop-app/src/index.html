@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Sense - Desktop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body class="bg-gray-900 text-gray-100 dark:bg-gray-900">
+    <!-- Main Container -->
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-gray-800 border-r border-gray-700 overflow-y-auto">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-cyan-400">
+                    <i class="fas fa-shield-alt mr-2"></i>Trust Sense
+                </h1>
+                <p class="text-sm text-gray-400 mt-1">Desktop App</p>
+            </div>
+
+            <nav class="space-y-2 px-4">
+                <button class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition active" 
+                        data-section="analyze">
+                    <i class="fas fa-search mr-3"></i>
+                    <span data-i18n="Analyze">Analyze</span>
+                </button>
+                <button class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition" 
+                        data-section="history">
+                    <i class="fas fa-history mr-3"></i>
+                    <span data-i18n="History">History</span>
+                </button>
+                <button class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition" 
+                        data-section="dashboard">
+                    <i class="fas fa-chart-bar mr-3"></i>
+                    <span data-i18n="Dashboard">Dashboard</span>
+                </button>
+                <button class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition" 
+                        data-section="chatbot">
+                    <i class="fas fa-comments mr-3"></i>
+                    <span>Chatbot</span>
+                </button>
+                <button class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition" 
+                        data-section="settings">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span data-i18n="Settings">Settings</span>
+                </button>
+            </nav>
+
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-gray-700">
+                <button id="theme-toggle" class="w-full px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition mb-2">
+                    <i class="fas fa-moon mr-2"></i>
+                    <span id="theme-label">Dark Mode</span>
+                </button>
+                <div class="text-xs text-gray-500 text-center">v1.0.0</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-10">
+                <div class="flex justify-between items-center px-8 py-4">
+                    <h2 id="page-title" class="text-2xl font-bold">Analyze Content</h2>
+                    <div class="flex gap-4 items-center">
+                        <div class="flex items-center gap-2">
+                            <select id="language-select" class="bg-gray-700 px-3 py-2 rounded text-sm">
+                                <option value="en">English</option>
+                                <option value="fr">Français</option>
+                                <option value="es">Español</option>
+                                <option value="de">Deutsch</option>
+                            </select>
+                        </div>
+                        <button onclick="window.location.reload()" class="icon-btn" title="Refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Notifications -->
+            <div id="notifications-container" class="fixed top-20 right-8 space-y-2 z-50"></div>
+
+            <!-- Content Sections -->
+            <div class="p-8">
+                <!-- Analyze Section -->
+                <section id="analyze-section" class="space-y-6">
+                    <!-- Content Type Tabs -->
+                    <div class="flex gap-2 border-b border-gray-700 pb-4">
+                        <button class="content-tab px-4 py-2 border-b-2 border-cyan-400 text-cyan-400" data-type="text">
+                            <i class="fas fa-file-alt mr-2"></i><span data-i18n="Text">Text</span>
+                        </button>
+                        <button class="content-tab px-4 py-2 text-gray-400 hover:text-white" data-type="url">
+                            <i class="fas fa-link mr-2"></i><span data-i18n="URL">URL</span>
+                        </button>
+                        <button class="content-tab px-4 py-2 text-gray-400 hover:text-white" data-type="audio">
+                            <i class="fas fa-microphone mr-2"></i><span data-i18n="Audio">Audio</span>
+                        </button>
+                        <button class="content-tab px-4 py-2 text-gray-400 hover:text-white" data-type="video">
+                            <i class="fas fa-video mr-2"></i><span data-i18n="Video">Video</span>
+                        </button>
+                        <button class="content-tab px-4 py-2 text-gray-400 hover:text-white" data-type="image">
+                            <i class="fas fa-image mr-2"></i><span data-i18n="Image">Image</span>
+                        </button>
+                    </div>
+
+                    <!-- Input Areas -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Text Input -->
+                        <div data-content-type="text" class="lg:col-span-2">
+                            <label class="block text-sm font-medium mb-2" data-i18n="Paste your content here">Paste your content here</label>
+                            <textarea id="text-input" class="w-full h-48 bg-gray-700 border border-gray-600 rounded p-4 text-white focus:outline-none focus:border-cyan-400" 
+                                    placeholder="Enter text to analyze..."></textarea>
+                        </div>
+
+                        <!-- URL Input -->
+                        <div data-content-type="url" class="lg:col-span-2 hidden">
+                            <label class="block text-sm font-medium mb-2" data-i18n="Enter URL">Enter URL</label>
+                            <input type="url" id="url-input" class="w-full bg-gray-700 border border-gray-600 rounded p-3 text-white focus:outline-none focus:border-cyan-400" 
+                                   placeholder="https://example.com">
+                        </div>
+
+                        <!-- Audio Upload -->
+                        <div data-content-type="audio" class="lg:col-span-2 hidden">
+                            <label class="block text-sm font-medium mb-2" data-i18n="Upload Audio">Upload Audio</label>
+                            <div class="drop-zone border-2 border-dashed border-gray-600 rounded p-8 text-center hover:border-cyan-400 transition cursor-pointer">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 mb-2"></i>
+                                <p data-i18n="Drop image here or click">Drop audio here or click to select</p>
+                                <input type="file" id="audio-input" accept="audio/*" class="hidden">
+                            </div>
+                            <div id="audio-preview" class="mt-2 text-sm text-gray-400"></div>
+                        </div>
+
+                        <!-- Video Upload -->
+                        <div data-content-type="video" class="lg:col-span-2 hidden">
+                            <label class="block text-sm font-medium mb-2" data-i18n="Upload Video">Upload Video</label>
+                            <div class="drop-zone border-2 border-dashed border-gray-600 rounded p-8 text-center hover:border-cyan-400 transition cursor-pointer">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 mb-2"></i>
+                                <p>Drop video here or click to select</p>
+                                <input type="file" id="video-input" accept="video/*" class="hidden">
+                            </div>
+                            <div id="video-preview" class="mt-2 text-sm text-gray-400"></div>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div data-content-type="image" class="lg:col-span-2 hidden">
+                            <label class="block text-sm font-medium mb-2" data-i18n="Upload Image">Upload Image</label>
+                            <div class="drop-zone border-2 border-dashed border-gray-600 rounded p-8 text-center hover:border-cyan-400 transition cursor-pointer">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-500 mb-2"></i>
+                                <p>Drop image here or click to select</p>
+                                <input type="file" id="image-input" accept="image/*" class="hidden">
+                            </div>
+                            <div id="image-preview" class="mt-2"></div>
+                        </div>
+
+                        <!-- Options Sidebar -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2" data-i18n="Analysis Type">Analysis Type</label>
+                                <select id="analysis-type" class="w-full bg-gray-700 border border-gray-600 rounded p-2">
+                                    <option value="quick" data-i18n="Quick Scan">Quick Scan</option>
+                                    <option value="deep" data-i18n="Deep Analysis">Deep Analysis</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <button id="analyze-btn" class="w-full btn-primary">
+                                    <i class="fas fa-play mr-2"></i>
+                                    <span data-i18n="Analyze Now">Analyze Now</span>
+                                </button>
+                                <button id="clear-btn" class="w-full bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition">
+                                    <i class="fas fa-trash mr-2"></i>
+                                    <span data-i18n="Clear">Clear</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="results-section" class="hidden bg-gray-800 rounded-lg p-6 border border-gray-700">
+                        <h3 class="text-xl font-bold mb-4 text-cyan-400">Analysis Results</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <div class="text-3xl font-bold text-green-400" id="results-score">0</div>
+                                <div class="text-sm text-gray-400" data-i18n="Trust Score">Trust Score</div>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <div class="text-3xl font-bold text-blue-400" id="results-credibility">N/A</div>
+                                <div class="text-sm text-gray-400" data-i18n="Credibility">Credibility</div>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <div class="text-3xl font-bold text-purple-400" id="results-emotion">N/A</div>
+                                <div class="text-sm text-gray-400" data-i18n="Emotion">Emotion</div>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <div class="text-3xl font-bold text-yellow-400">N/A</div>
+                                <div class="text-sm text-gray-400" data-i18n="Bias">Bias</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History Section -->
+                <section id="history-section" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold" data-i18n="Analysis History">Analysis History</h2>
+                        <div class="flex gap-2">
+                            <button id="export-btn" class="btn-secondary">
+                                <i class="fas fa-download mr-2"></i>
+                                <span data-i18n="Export">Export</span>
+                            </button>
+                            <button id="delete-all-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded transition">
+                                <i class="fas fa-trash mr-2"></i>
+                                <span>Delete All</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <input type="text" id="history-search" class="flex-1 bg-gray-700 border border-gray-600 rounded px-4 py-2" 
+                               placeholder="Search analyses...">
+                        <select id="type-filter" class="bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                            <option value="all">All Types</option>
+                            <option value="text">Text</option>
+                            <option value="url">URL</option>
+                            <option value="audio">Audio</option>
+                            <option value="video">Video</option>
+                            <option value="image">Image</option>
+                        </select>
+                        <select id="score-filter" class="bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                            <option value="">All Scores</option>
+                            <option value="75-100">High (75+)</option>
+                            <option value="50-74">Medium (50-74)</option>
+                            <option value="0-49">Low (&lt;50)</option>
+                        </select>
+                    </div>
+
+                    <div class="overflow-x-auto bg-gray-800 rounded-lg border border-gray-700">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-700 border-b border-gray-600">
+                                <tr>
+                                    <th class="px-4 py-3" data-i18n="Date">Date</th>
+                                    <th class="px-4 py-3" data-i18n="Type">Type</th>
+                                    <th class="px-4 py-3" data-i18n="Score">Score</th>
+                                    <th class="px-4 py-3">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <tr>
+                                    <td colspan="4" class="text-center py-8 text-gray-500" data-i18n="No analyses yet">
+                                        No analyses yet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button id="prev-page" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">Previous</button>
+                        <span id="page-info">Page 1</span>
+                        <button id="next-page" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">Next</button>
+                    </div>
+                </section>
+
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold" data-i18n="Dashboard">Dashboard</h2>
+                        <div class="flex gap-2">
+                            <button id="refresh-dashboard" class="btn-secondary">
+                                <i class="fas fa-sync-alt mr-2"></i>Refresh
+                            </button>
+                            <button id="export-report" class="btn-secondary">
+                                <i class="fas fa-file-download mr-2"></i>Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="statistics-container" class="grid gap-4"></div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-bold mb-4">Trust Trends</h3>
+                            <canvas id="trend-chart"></canvas>
+                        </div>
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-bold mb-4">Content Type Distribution</h3>
+                            <canvas id="type-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h3 class="font-bold mb-4">Score Distribution</h3>
+                        <canvas id="score-chart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Chatbot Section -->
+                <section id="chatbot-section" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">AI Chatbot</h2>
+                        <button id="clear-chat-btn" class="btn-secondary text-sm">
+                            <i class="fas fa-trash mr-2"></i>Clear Chat
+                        </button>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 h-96 flex flex-col">
+                        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+                        
+                        <div class="border-t border-gray-700 p-4">
+                            <div class="flex gap-2 mb-2">
+                                <button id="voice-chat-btn" class="btn-icon">
+                                    <i class="fas fa-microphone"></i> Voice Chat
+                                </button>
+                                <button id="attach-file-btn" class="btn-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                                <input type="file" id="chat-file-input" class="hidden" accept="image/*, audio/*, video/*">
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" id="chat-input" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2" 
+                                       placeholder="Ask me anything...">
+                                <button id="chat-send-btn" class="btn-primary px-6">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings-section" class="hidden space-y-6 max-w-2xl">
+                    <h2 class="text-2xl font-bold" data-i18n="Settings">Settings</h2>
+
+                    <!-- Theme Settings -->
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h3 class="font-bold mb-4" data-i18n="Theme">Theme</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="theme" value="dark" class="w-4 h-4">
+                                <span>🌙 <span data-i18n="Dark Mode">Dark Mode</span></span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="theme" value="light" class="w-4 h-4">
+                                <span>☀️ <span data-i18n="Light Mode">Light Mode</span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Language Settings -->
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h3 class="font-bold mb-4" data-i18n="Language">Language</h3>
+                        <select id="language-select-settings" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                            <option value="en">English</option>
+                            <option value="fr">Français</option>
+                            <option value="es">Español</option>
+                            <option value="de">Deutsch</option>
+                        </select>
+                    </div>
+
+                    <!-- Data Management -->
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h3 class="font-bold mb-4" data-i18n="Data">Data</h3>
+                        <div class="space-y-2">
+                            <button id="clear-history-btn" class="w-full px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded transition">
+                                <i class="fas fa-trash mr-2"></i>
+                                <span data-i18n="Clear History">Clear History</span>
+                            </button>
+                            <button id="export-data-btn" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded transition">
+                                <i class="fas fa-download mr-2"></i>
+                                <span data-i18n="Export Data">Export All Data</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- API Settings (if needed for advanced users) -->
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h3 class="font-bold mb-4">API Configuration</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm mb-1">API URL</label>
+                                <input type="text" id="api-url-input" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2" 
+                                       placeholder="http://localhost:8000">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">API Key</label>
+                                <input type="password" id="api-key-input" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2" 
+                                       placeholder="Your API key">
+                            </div>
+                            <button id="save-api-settings" class="w-full btn-primary">
+                                <i class="fas fa-save mr-2"></i>Save Settings
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="bg-red-900 bg-opacity-20 border-2 border-red-700 p-6 rounded-lg">
+                        <h3 class="font-bold mb-4 text-red-400" data-i18n="Delete Account">Delete Account</h3>
+                        <p class="text-sm text-gray-300 mb-4">This action is irreversible and will delete all your data.</p>
+                        <button id="delete-account-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded transition">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span data-i18n="Delete Account">Delete Account</span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./contexts/AppContext.js"></script>
+    <script src="./i18n/translations.js"></script>
+    <script src="./components/AnalyzeComponent.js"></script>
+    <script src="./components/HistoryComponent.js"></script>
+    <script src="./components/DashboardComponent.js"></script>
+    <script src="./components/ChatbotComponent.js"></script>
+    <script src="./components/SettingsComponent.js"></script>
+    <script src="./renderer.js"></script>
+</body>
+</html>

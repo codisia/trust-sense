@@ -1,0 +1,317 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-gray-900 text-gray-100;
+    font-family: 'Roboto', sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  /* Light theme */
+  body.light-theme {
+    @apply bg-gray-50 text-gray-900;
+  }
+
+  body.light-theme .bg-gray-900 {
+    @apply bg-gray-50;
+  }
+
+  body.light-theme .bg-gray-800 {
+    @apply bg-white;
+  }
+
+  body.light-theme .bg-gray-700 {
+    @apply bg-gray-100;
+  }
+
+  body.light-theme .text-gray-100 {
+    @apply text-gray-900;
+  }
+
+  body.light-theme .text-gray-300 {
+    @apply text-gray-700;
+  }
+
+  body.light-theme .text-gray-400 {
+    @apply text-gray-600;
+  }
+
+  body.light-theme .border-gray-700 {
+    @apply border-gray-300;
+  }
+
+  body.light-theme .border-gray-600 {
+    @apply border-gray-400;
+  }
+
+  body.light-theme input,
+  body.light-theme select,
+  body.light-theme textarea {
+    @apply bg-white text-gray-900 border-gray-400;
+  }
+
+  body.light-theme input::placeholder,
+  body.light-theme textarea::placeholder {
+    @apply text-gray-500;
+  }
+
+  body.light-theme .nav-item {
+    @apply text-gray-700 hover:text-cyan-600 hover:bg-gray-100;
+  }
+
+  body.light-theme .nav-item.active {
+    @apply bg-cyan-50 text-cyan-600 border-l-2 border-cyan-600;
+  }
+
+  body.light-theme .btn-secondary {
+    @apply bg-gray-100 text-gray-800 border-gray-400 hover:bg-gray-200;
+  }
+
+  body.light-theme .btn-primary {
+    @apply bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700;
+  }
+}
+
+@layer components {
+  /* Navigation Items */
+  .nav-item {
+    @apply cursor-pointer transition-all duration-200 text-gray-400 hover:text-cyan-400 rounded-lg;
+  }
+
+  .nav-item.active {
+    @apply bg-cyan-500 bg-opacity-10 text-cyan-400 border-l-2 border-cyan-400 !important;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/50 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-700 text-gray-300 font-medium rounded-lg border border-gray-600 transition-all duration-300 hover:bg-gray-600 hover:border-gray-500 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-icon {
+    @apply inline-flex items-center justify-center px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-300 hover:text-cyan-400 hover:border-cyan-400 transition-all duration-300;
+  }
+
+  /* Input Fields */
+  input,
+  select,
+  textarea {
+    @apply w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all;
+  }
+
+  /* Content Tabs */
+  .content-tab {
+    @apply px-4 py-2 rounded-t-lg text-gray-400 border-b-2 border-transparent hover:text-cyan-400 transition-all duration-200 cursor-pointer;
+  }
+
+  .content-tab.active {
+    @apply text-cyan-400 border-b-2 border-cyan-400 !important;
+  }
+
+  /* Drop Zone */
+  .drop-zone {
+    @apply border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-cyan-400 transition-all duration-300 cursor-pointer;
+  }
+
+  .drop-zone.drag-over {
+    @apply border-cyan-400 bg-cyan-400/5;
+  }
+
+  /* Stat Cards */
+  .stat-card {
+    @apply bg-gray-800 border border-gray-700 rounded-lg p-4 text-center hover:border-cyan-400 transition-all;
+  }
+
+  /* Messages */
+  .message {
+    @apply px-4 py-2 rounded-lg max-w-xs;
+  }
+
+  .message.user {
+    @apply ml-auto bg-cyan-600 text-white;
+  }
+
+  .message.bot {
+    @apply mr-auto bg-gray-700 text-gray-100;
+  }
+
+  /* Notifications */
+  .notification {
+    @apply fixed px-4 py-3 rounded-lg shadow-lg animate-slideInRight;
+  }
+
+  .notification.success {
+    @apply bg-green-500 text-white;
+  }
+
+  .notification.error {
+    @apply bg-red-500 text-white;
+  }
+
+  .notification.info {
+    @apply bg-blue-500 text-white;
+  }
+
+  .notification.warning {
+    @apply bg-yellow-500 text-white;
+  }
+
+  /* Tables */
+  table {
+    @apply w-full;
+  }
+
+  thead {
+    @apply bg-gray-700 border-b border-gray-600;
+  }
+
+  tbody tr {
+    @apply border-b border-gray-700 hover:bg-gray-750 transition-colors;
+  }
+
+  tbody td {
+    @apply px-4 py-3;
+  }
+
+  /* Modal */
+  .modal {
+    @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden;
+  }
+
+  .modal.active {
+    @apply flex !important;
+  }
+
+  .modal-content {
+    @apply bg-gray-800 border border-gray-700 rounded-lg p-6 max-w-md w-full;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded-full hover:bg-gray-500;
+}
+
+body.light-theme ::-webkit-scrollbar-track {
+  @apply bg-gray-200;
+}
+
+body.light-theme ::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 hover:bg-gray-500;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(34, 211, 238, 0.6);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-spin {
+  animation: spin 0.6s linear infinite;
+}
+
+/* Utility classes */
+.text-center {
+  @apply text-center;
+}
+
+.flex {
+  @apply flex;
+}
+
+.gap-2 {
+  @apply gap-2;
+}
+
+.gap-4 {
+  @apply gap-4;
+}
+
+.gap-6 {
+  @apply gap-6;
+}
+
+.hidden {
+  @apply hidden;
+}

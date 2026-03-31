@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>TRUST SENSE Email Analysis</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            padding: 20px;
+        }
+        .header {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .analysis-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .analysis-row:last-child { border-bottom: none; }
+        .label { font-weight: 500; }
+        .value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .phishing-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        .phishing-high { background: #f44336; }
+        .phishing-medium { background: #ff9800; }
+        .phishing-low { background: #4caf50; }
+        .warning {
+            background: #fffde7;
+            border-left: 4px solid #fbc02d;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .warning-text { font-size: 13px; color: #333; }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background: #5568d3; }
+        .spinner {
+            text-align: center;
+            padding: 20px;
+            color: white;
+        }
+        .loading-spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 TRUST SENSE</h1>
+            <p>Email Safety Analysis</p>
+        </div>
+
+        <div id="loading" class="spinner" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 15px;">Analyzing email...</p>
+        </div>
+
+        <div id="result" style="display: none;">
+            <div class="card">
+                <h3 style="margin-bottom: 10px;">📧 Email Analysis</h3>
+                
+                <div class="analysis-row">
+                    <span class="label">Sender</span>
+                    <span class="value" id="sender">—</span>
+                </div>
+
+                <div class="analysis-row">
+                    <span class="label">Subject</span>
+                    <span class="value" id="subject">—</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 10px;">⚠️ Security Assessment</h3>
+                
+                <div class="analysis-row">
+                    <span class="label">Phishing Risk</span>
+                    <div>
+                        <span class="phishing-badge" id="phishing-badge">—</span>
+                        <div id="phishing-score" style="font-size: 14px; color: #667eea; font-weight: bold; margin-top: 5px;">—</div>
+                    </div>
+                </div>
+
+                <div class="analysis-row">
+                    <span class="label">Spam Detection</span>
+                    <span class="value" id="spam-status">—</span>
+                </div>
+
+                <div class="analysis-row">
+                    <span class="label">Malicious Intent</span>
+                    <span class="value" id="malicious-score">—</span>
+                </div>
+            </div>
+
+            <div id="warnings"></div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 10px;">📋 Recommendations</h3>
+                <ul id="recommendations" style="margin-left: 15px; font-size: 13px; color: #555; line-height: 1.8;">
+                </ul>
+            </div>
+        </div>
+
+        <div id="error" class="card" style="display: none; color: #f44336;">
+            <strong>❌ Error</strong>
+            <p id="error-message" style="margin-top: 10px; font-size: 13px;">Unable to analyze email</p>
+        </div>
+    </div>
+
+    <script src="taskpane.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PIPFILE.lock
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.tox/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+.npm
+.eslintcache
+.node_repl_history
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Build
+build/
+dist/
+.next/
+out/
+.nuxt/
+.cache/
+.vuepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vuepress/dist
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+*.log
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+*.postgres
+
+# Testing
+.coverage
+.pytest_cache/
+.tox/
+htmlcov/
+
+# Production build
+.vercel
+.next
+dist
+build
+
+# IDE specific
+.vscode
+.idea
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+.parcel-cache
+
+# Video files (if too large)
+videos/*.mp4
+videos/*.mov
+
+# Backend venv structure (if included)
+backend/venv/
+backend/.venv/
+
+
+# Expo
+.expo/
+mobile-app/.expo/
+
+# Archives
+*.zip
+*.rar
+*.7z
+
+# Large generated folders
+desktop-app/dist/
+mobile-app/dist/

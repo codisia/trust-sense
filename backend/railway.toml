@@ -1,0 +1,13 @@
+[build]
+builder = "heroku.buildpacks"
+buildpacks = ["heroku/python"]
+
+[env]
+PYTHONUNBUFFERED = "1"
+PORT = "8000"
+
+[start]
+cmd = "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+
+[[migrations]]
+cmd = "python -m app.core.database"

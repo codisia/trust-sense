@@ -1,0 +1,26 @@
+# Render.com — Free tier backend
+# Set "Root Directory" to backend in Render Dashboard if using repo root.
+# Or move this file to backend/render.yaml and set Root Directory = backend.
+
+services:
+  - type: web
+    name: trust-sense-api
+    runtime: python
+    region: oregon
+    plan: free
+    rootDirectory: backend
+
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ENVIRONMENT
+        value: production
+
+    healthCheckPath: /health
